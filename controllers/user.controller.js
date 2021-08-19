@@ -338,12 +338,33 @@ const moveToWishList = async (req, res) => {
 
 const increaseQty = async (req, res) => {
   try {
-    console.log("Increase qty route is  working");
-    const { productId, userId } = req.params;
-    const { operation } = req.query;
-    console.log({ operation });
+    const { productId, userId, qty } = req.params;
+
+    let response;
+    response = await User.findById(userId).select("cart");
+    const userCart = response.cart;
+
+    const cartWithUpdatedQty = userCart.map((cartItem) => {
+      if (String(cartItem.product) === productId) {
+        cartItem.qty = parseInt(qty);
+      }
+      return cartItem;
+    });
+
+    response = await User.findByIdAndUpdate(
+      userId,
+      { cart: cartWithUpdatedQty },
+      { new: true }
+    ).populate("cart.product", "-__v");
+
+    return res.json({ success: true, updatedCart: response });
   } catch (error) {
     console.log(error.message);
+    return res.status(500).json({
+      success: false,
+      message: "Could not udpate the quantity",
+      errorMessage: error.message,
+    });
   }
 };
 

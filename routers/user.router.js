@@ -36,7 +36,7 @@ userRouter
   .post(addToCart)
   .delete(removeFromCart);
 
-userRouter.route("/:userId/cart/:productId?qty=:qty").post(increaseQty);
+userRouter.route("/:userId/cart/:productId/:qty").post(increaseQty);
 
 userRouter
   .route("/:userId/wishlist/:productId")
