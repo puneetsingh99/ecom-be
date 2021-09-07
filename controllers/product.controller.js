@@ -110,6 +110,34 @@ const addDescription = async (req, res) => {
   }
 };
 
+const searchProduct = async (req, res) => {
+  try {
+    const { searchKey } = req.body;
+    if (!searchKey) {
+      return res
+        .status(500)
+        .json({ success: false, message: "Empty search key" });
+    }
+    let regex = new RegExp(searchKey, "i");
+    const matchingProducts = await Product.find({
+      $and: [
+        {
+          $or: [
+            { title: regex },
+            { author: regex },
+            { category: regex },
+            { productType: regex },
+          ],
+        },
+      ],
+    });
+
+    return res.status(200).json({ success: true, matchingProducts });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   getProductlist,
   getProduct,
@@ -118,4 +146,5 @@ module.exports = {
   productIdCheckHandler,
   removeAllProducts,
   addDescription,
+  searchProduct,
 };

@@ -7,9 +7,11 @@ const {
   productIdCheckHandler,
   addReview,
   addDescription,
+  searchProduct,
 } = require("../controllers/product.controller");
 
 const productRouter = express.Router();
+productRouter.route("/search").post(searchProduct);
 
 productRouter
   .route("/")

@@ -165,10 +165,10 @@ const removeFromCart = async (req, res) => {
 const getCart = async (req, res) => {
   try {
     const { userId } = req.params;
-    const data = await User.findById(userId)
+    const cart = await User.findById(userId)
       .select("cart")
       .populate("cart.product", "-__v");
-    return res.json({ success: true, data });
+    return res.json({ success: true, cart });
   } catch (error) {
     return res.status(500).json({
       success: false,
@@ -178,14 +178,13 @@ const getCart = async (req, res) => {
   }
 };
 
-// WISHLIST
 const getWishList = async (req, res) => {
   try {
     const { userId } = req.params;
-    const data = await User.findById(userId)
+    const wishlist = await User.findById(userId)
       .select("wishlist")
       .populate("wishlist", "-__v");
-    return res.json({ success: true, data });
+    return res.json({ success: true, wishlist });
   } catch (error) {
     return res.status(500).json({
       success: false,
@@ -248,7 +247,6 @@ const removeFromWishList = async (req, res) => {
   }
 };
 
-// MOVE TO CART
 const moveToCart = async (req, res) => {
   try {
     const { productId, userId } = req.params;
@@ -259,7 +257,6 @@ const moveToCart = async (req, res) => {
     );
 
     if (!productAlreadyExists) {
-      //add to cart + remove from the wishlist
       const updatedCart = await User.findByIdAndUpdate(
         userId,
         {
@@ -274,7 +271,6 @@ const moveToCart = async (req, res) => {
         .populate("cart.product wishlist", "-__v");
       return res.json({ success: true, updatedCart });
     } else {
-      //only remove from wishlist
       const updatedCart = await User.findByIdAndUpdate(
         userId,
         { $pull: { wishlist: productId } },
