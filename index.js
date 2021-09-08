@@ -7,6 +7,7 @@ const { routeNotFound } = require("./middlewares/route-not-found.middleware");
 const { errorHandler } = require("./middlewares/error-handler.middleware");
 const { login } = require("./controllers/auth.controller");
 const { loginHandler } = require("./middlewares/login.middleware");
+const { paymentRouter } = require("./routers/payment.router");
 const { productRouter } = require("./routers/product.router");
 
 const app = express();
@@ -17,6 +18,7 @@ app.use(bodyParser.json());
 
 initializeDbConnection();
 
+app.use("/payment", paymentRouter);
 app.use("/users", userRouter);
 app.use("/products", productRouter);
 app.use("/login", loginHandler, login);
